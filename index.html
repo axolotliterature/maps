@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Hogwarts Castle</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="img/04b70f106fe860e0124a9045204549ee.gif">
+    <!-- <link type="text/css" rel="stylesheet" href="styles.css"> -->
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
+
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Charmonman&family=Swanky+and+Moo+Moo&display=swap');
+
+        @font-face {
+            font-family: 'HarryPotter';
+            src: url(harrypotter.TTF)
+        }
+
+        @font-face {
+            font-family: 'WizardingWorld';
+            src: url(WizardWorldSimplified-Kxr7.ttf);
+        }
+
+    body {
+        height: 100%;
+        width: 100%;
+        margin: 0; 
+        padding: 0; 
+        background-color: #0f0a1d;
+        font-size: 20px;
+        color: white;
+    }
+
+    h1 {
+        font-size: 2.8em;
+        font-weight: normal;
+        margin: 10px;
+        font-family: 'HarryPotter';
+    }
+
+    h2 {
+        font-size: 1.2em;
+        font-weight: normal;
+        margin: 10px;
+        font-family: 'WizardingWorld';
+    }
+
+    p {
+        font-size: 1.3em;
+        margin: 10px;
+        font-family: 'Swanky and Moo Moo';
+    }
+
+    /* NAV TABS */
+
+    .tab {
+        overflow: hidden;
+        border: 2px solid rgb(184, 184, 184);
+        background-color: #dddddd;
+    }
+
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        border-radius: 0px 0px 10px 10px;
+    }
+
+    .tab button:hover {
+        background-color: rgb(161, 161, 161);
+    }
+
+    .tab button.active {
+        background-color: rgb(85, 36, 199);
+        color: rgb(223, 223, 223);
+    }
+
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        /* border: 1px solid #ccc; */
+        /* border-top: none; */
+        animation: fadeEffect 2s;
+    }
+
+    @keyframes fadeEffect {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    .tabcontent img {
+        display: block;
+        max-width: 50%;
+        height: auto;
+        /* max-width: 400px; */
+    }
+
+    .tabcontent img.longImg {
+        max-width: 90% !important;
+        height: auto;
+    }
+
+    .hwbg {
+        background-image: url("img/hp-f1-hogwarts-boats-firstyear-square.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+        min-height: 800px;
+        overflow: hidden;
+    }
+
+    .hwbg p {
+        text-shadow: 2px 2px rgb(32, 32, 32);
+    }
+
+    #musicBox {
+        padding: 5px;
+        position: fixed;
+        bottom: 25px;
+        left: 5px;
+        z-index: 2;
+    }
+
+    .floatLeft {
+        float: left;
+    }
+
+    .floatRight {
+        float: right;
+    }
+
+    .centerImg {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #wrapper {
+        height: 100%;
+        width: auto;
+    }
+
+    #map-container {
+        background-color: black;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 60%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    #map { 
+        height: 100%;
+        width: 100%; 
+    }
+
+    #content-container {
+        width: 40%;
+        height: 100%;
+        margin-left: 60%;
+        /* border: 1px red solid; */
+    }
+
+    /* .hide {
+        display: none;
+    } */
+
+    </style>
+</head>
+
+<body>
+    <header>
+        
+    </header>
+
+
+    <div id="wrapper">  
+        <audio id="musicBox" controls autoplay>
+            <source src="hedwigs_theme.mp3" type="audio/mpeg">
+          Your browser does not support the audio element.
+          </audio>
+
+        <div id="map-container">
+            <div id="map"></div>
+            <!-- <button id="reset">RESET MAP</button> -->
+        </div>
+
+
+    <div id="content-container">
+
+        <!-- NAV TABS -->
+        <div class="tab">
+            <button class="home tablinks" onclick="openCity(event, 'home')" id="defaultOpen">Home</button>
+            <button id="alnwickButton" class="tablinks" onclick="openCity(event, 'alnwick')">Alnwick Castle</button>
+            <button id="oxfordButton" class="tablinks" onclick="openCity(event, 'oxford')">Oxford University</button>
+            <button id="newCollegeButton" class="tablinks" onclick="openCity(event, 'newCollege')">New College</button>
+            <button id="christChurchButton" class="tablinks" onclick="openCity(event, 'christChurch')">Christ Church</button>
+            <button id="durhamButton" class="tablinks" onclick="openCity(event, 'durham')">Durham Cathedral</button>
+            <button id="lacockButton" class="tablinks" onclick="openCity(event, 'lacock')">Lacock Abbey</button>
+            <button id="gloucesterButton" class="tablinks" onclick="openCity(event, 'gloucester')">Gloucester Cathedral</button>
+            <button id="glenfinnanButton" class="tablinks" onclick="openCity(event, 'glenfinnan')">Glenfinnan Viaduct</button>
+        </div>
+
+        <!-- TAB CONTENT -->
+        <div class="tabcontent" id="home">
+            <h1>Welcome to Hogwarts!</h1>
+            <!-- <h2>"Before we begin our banquet, I would like to say a few words. And here they are:" <br>"Nitwit! Blubber! Oddment! Tweak!"</h2> -->
+            <h2>Welcome to a guided tour of the castles and cathedrals that make up much of Hogwarts Castle's many filming locations!</h2>
+            <div class="hwbg">
+                <p class="floatLeft">"You might belong in Gryffindor,
+                    <br>Where dwell the brave at heart,
+                    <br>Their daring, nerve, and chivalry,
+                    <br>Set Gryffindors apart;"
+                </p>
+                <p class="floatRight">"You might belong in Hufflepuff,
+                    <br>Where they are just and loyal,
+                    <br>Those patient Hufflepuffs are true,
+                    <br>And unafraid of toil;"
+                </p>
+                <p class="floatLeft">"Or yet in wise old Ravenclaw,
+                    <br>If you've a ready mind,
+                    <br>Where those of wit and learning,
+                    <br>Will always find their kind;"
+                </p>
+                <p class="floatRight">"Or perhaps in Slytherin,
+                    <br>You'll make your real friends,
+                    <br>These cunning folks use any means
+                    <br>To achieve their ends."
+                    <br><em>-The Sorting Hat</em>
+                </p>
+            </div>
+        </div>
+        <div class="castle tabcontent" id="alnwick">
+            <h1>Alnwick Castle</h1>
+            <!-- <h2>Welcome to the mighty Alnwick Castle!</h2>  -->
+            <p>Located in the city of Alnwick, in Northumberland, England, Alnwick Castle was used for a vast majority of the exterior shots of Hogwarts Castle itself, including a majority of scenes throughout the grounds of Hogwarts.</p>
+            <img class="floatLeft" src="img/alnwick-castle-harry-potter-1.jpg" alt="Alnwick Castle">
+            <img class="floatRight" src="img/alnwick-castle-harry-potter-3-1.jpg" alt="Alnwick Castle">
+            <img class="floatLeft" src="img/alnwick-hp1_0-55-04.jpg" alt="Alnwick Castle">
+            <img class="floatRight" src="img/alnwick-hp1_0-55-24.jpg" alt="Alnwick Castle">
+            <img class="centerImg" src="img/alnwick-hp1_1-50-09.jpg" alt="Alnwick Castle">
+        </div>
+        <div class="castle tabcontent" id="oxford">
+            <h1>Oxford University</h1>
+            <p>The prestigious Oxford University, founded 1096CE, was used for filming many scenes for the Hogwarts castle interiors. These interior locations included many of the great stairases, the Hogwarts library, and also the castle's hospital wing. Many Hogwarts classrooms were filmed on campus, notably Professor Flitwick's Charms lecture hall.</p>
+            <img class="floatLeft" src="img/oxford-bodelan-library.jpg" alt="Oxford University">
+            <img class="floatRight" src="img/oxford-hogwarts-bodleian-library.jpg" alt="Oxford University">
+            <img class="centerImg" src="img/oxford-bodleian-library-divinity-school.jpg" alt="Oxford University">
+        </div>
+        <div class="castle tabcontent" id="newCollege">
+            <h1>New College</h1>
+            <p>New College is one of the constituent colleges of Oxford University. This location is most notable for its cloisters, used to film many of the ground floor Hogwarts hallways and for its highly recognizable courtyard which makes many appearances throughout the Harry Potter franchise.</p>
+            <img class="floatLeft" src="img/oxford-24-1.jpg" alt="New College Campus">
+            <img class="floatRight" src="img/oxford-23-1.jpg" alt="New College Campus">
+        </div>
+        <div class="castle tabcontent" id="christChurch">
+            <h1>Christ Church Cathedral</h1>
+            <p>Another constituent college of Oxford University, Christ Church was used for its massive cathedral for filming more of the interiors and classrooms of Hogwarts. The Great Hall of Hogwarts was largely inspired by the dining hall of Christ Church, from the tall arching ceilings to the long rows of tables, down to the front rows of tables for the staff that look out over the rest of the dining hall.</p>
+            <img class="floatLeft" src="img/christchurch-dining-hall-oxford.jpg" alt="Christ Church Cathedral">
+            <img class="floatRight" src="img/christchurch-staircase-oxford.jpg" alt="Christ Church Cathedral">
+            <img class="centerImg" src="img/christchurch-cloisters-oxford.jpg" alt="Christ Church Cathedral"> 
+        </div>
+        <div class="castle tabcontent" id="durham">
+            <h1>Durham Cathedral</h1>
+            <p>Durham Cathedral is another highly recognizable location used for its cloisters and courtyard for filming many of the ground floor hallways and courtyard scenes around Hogwarts castle. The cathedral was also used to film some of the classrooms of Hogwarts, most notably Professor McGonagall's Transfigurations lecture hall.</p>
+            <img class="floatLeft" src="img/durham-cathedral-cloisters-courtyard-1.jpg" alt="Durham Cathedral">
+            <img class="floatRight" src="img/durham-cathedral-cloisters-1-1.jpg" alt="Durham Cathedral">
+            <img class="floatLeft" src="img/durham-chapter-house-durham-cathedral.jpg" alt="Durham Cathedral">
+            <img class="floatRight" src="img/durham-cloisters-2-1.jpg" alt="Durham Cathedral">
+        </div>
+        <div class="castle tabcontent" id="lacock">
+            <h1>Lacock Abbey</h1>
+            <p>Lacock Abbey features more of the recognizable cloisters and courtyards from Hogwarts castle. The abbey's medieval basement was also used for some of the dungeon halls and classrooms of Hogwarts, most notably Professor Quirrell's Defense Against the Dark Arts lecture hall.</p>
+            <img class="floatLeft" src="img/lacock-abbey-04617.jpg" alt="Lacock Abbey">
+            <img class="floatRight" src="img/lacock-abbey-04551.jpg" alt="Lacock Abbey">
+            <img class="floatLeft" src="img/lacock-abbey-04618.jpg" alt="Lacock Abbey">
+            <img class="floatLeft" src="img/lacock-abbey-2015.jpg" alt="Lacock Abbey">
+            
+        </div>
+        <div class="castle tabcontent" id="gloucester">
+            <h1>Gloucester Cathedral</h1>
+            <p>Gloucester Cathedral was used for a great majority of the interior hallways of Hogwarts, notably the entrance to Gryffindor Tower. The lavatories of Gloucester Cathedral were also used to film various lavatories of Hogwarts Castle, notably the girls lavatory occupied by Moaning Myrtle.</p>
+            <img class="floatLeft" src="img/gloucester-cathedral-gryffindor-door.jpg" alt="Gloucester Cathedral">
+            <img class="floatRight" src="img/gloucester-cathedral-peeves.jpg" alt="Gloucester Cathedral">
+            <img class="floatLeft" src="img/gloucester-cathedral-1.jpg" alt="Gloucester Cathedral">
+            <img class="floatRight" src="img/gloucester-cathedral-moaning-myrtle.jpg" alt="Gloucester Cathedral">
+        </div>
+        <div class="castle tabcontent" id="glenfinnan">
+            <h1>Glenfinnan Viaduct</h1>
+            <p>The Glenfinnan Viaduct may not technically be a castle, though how might students arrive at Hogwarts without the Hogwarts Express? The Glenfinnan Viaduct along with the surrounding Scottish Highlands was used for filming the famous route taken by the Hogwarts Express.</p>
+            <img class="centerImg longImg" src="img/glenfinnan-hp2_0-24-31.jpg" alt="Glenfinnan Viaduct">
+            <img class="centerImg longImg" src="img/glenfinnan-hp3_0-20-39.jpg" alt="Glenfinnan Viaduct">
+        </div>
+            
+
+        </div>
+
+    </div>
+
+<script>
+
+    // MAP BOX STYLES
+    // Satellite mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf
+    // treasuremap mapbox://styles/ahansen89/ckmhmlczefq6a17qyulapwgep
+
+    // MAPBOX ACCESS TOKEN
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYWhhbnNlbjg5IiwiYSI6ImNrbG9nMW5ocDAzcHIycG8wcGQ4YWw0YnIifQ.YZ232BtV4tTOJlv_LiBC0Q';
+    
+    let map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/ahansen89/ckmhmlczefq6a17qyulapwgep', // style URL
+    center: [-3.081047960373099, 54.09356268958007], // starting position [lng, lat]
+    zoom: 6 // starting zoom
+    });
+// 54.09356268958007, -3.081047960373099
+    
+
+    // PAGE SCRIPT
+
+    // let reset = document.getElementById('reset');
+
+    document.getElementById("musicBox").volume = 0.5;
+
+    document.getElementById("defaultOpen").click();
+
+    function openCity(evt, cityName) {
+        let i, tabcontent, tablinks;
+
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+
+    // MAP FLY TO SCRIPTS
+
+    document.getElementById('defaultOpen').addEventListener('click', function () {
+        map.flyTo({
+        center: [-3.081047960373099, 54.09356268958007],
+        zoom: 6,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true // this animation is considered essential with respect to prefers-reduced-motion
+        });
+        map.setStyle('mapbox://styles/ahansen89/ckmhmlczefq6a17qyulapwgep');
+    });
+
+    document.getElementById('alnwickButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-1.7058583033086952, 55.4156522309505],
+        zoom: 18,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        // reset.classList.remove('hide');
+        // reset.classList.add('show');
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+    document.getElementById('oxfordButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-1.2553788238630534, 51.75370603109118],
+        zoom: 17,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+    document.getElementById('newCollegeButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-1.2517696250274932, 51.753990501867115],
+        // 51.753990501867115, -1.2517696250274932
+        zoom: 18.3,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+    document.getElementById('christChurchButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-1.2554251460990116, 51.7500691624219],
+        // 51.7500691624219, -1.2554251460990116
+        zoom: 18.3,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+    document.getElementById('durhamButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-1.5763959519769575, 54.77301688065518],
+        // 54.77301688065518, -1.5763959519769575
+        zoom: 18.3,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+    document.getElementById('lacockButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-2.1171532088146883, 51.41475670418588],
+        // 51.41475670418588, -2.1171532088146883
+        zoom: 18.3,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+    document.getElementById('gloucesterButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-2.246554714047171, 51.86762822050245],
+        // 51.86762822050245, -2.246554714047171
+        zoom: 18.3,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+    document.getElementById('glenfinnanButton').addEventListener('click', function () {
+        map.flyTo({
+        center: [-5.431878988253133, 56.87489955438692],
+        // 56.87489955438692, -5.431878988253133
+        zoom: 16.8,
+        speed: 1.1,
+        curve: 1.42,
+        easing(t) {
+            return t;
+        },
+        essential: true
+        });
+        map.setStyle('mapbox://styles/ahansen89/cklpthwkg5kog17olxyvuhmgf');
+    });
+
+
+</script>
+
+
+</body>
+</html>
