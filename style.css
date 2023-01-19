@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Charmonman&family=Swanky+and+Moo+Moo&display=swap');
+
+        @font-face {
+            font-family: 'HarryPotter';
+            src: url(harrypotter.TTF)
+        }
+
+        @font-face {
+            font-family: 'WizardingWorld';
+            src: url(WizardWorldSimplified-Kxr7.ttf);
+        }
+
+    body {
+        height: 100%;
+        width: 100%;
+        margin: 0; 
+        padding: 0; 
+        background-color: #0f0a1d;
+        font-size: 20px;
+        color: white;
+    }
+
+    h1 {
+        font-size: 2.8em;
+        font-weight: normal;
+        margin: 10px;
+        font-family: 'HarryPotter';
+    }
+
+    h2 {
+        font-size: 1.2em;
+        font-weight: normal;
+        margin: 10px;
+        font-family: 'WizardingWorld';
+    }
+
+    p {
+        font-size: 1.3em;
+        margin: 10px;
+        font-family: 'Swanky and Moo Moo';
+    }
+
+    /* NAV TABS */
+
+    .tab {
+        overflow: hidden;
+        border: 2px solid rgb(184, 184, 184);
+        background-color: #dddddd;
+    }
+
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        border-radius: 0px 0px 10px 10px;
+    }
+
+    .tab button:hover {
+        background-color: rgb(161, 161, 161);
+    }
+
+    .tab button.active {
+        background-color: rgb(85, 36, 199);
+        color: rgb(223, 223, 223);
+    }
+
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        /* border: 1px solid #ccc; */
+        /* border-top: none; */
+        animation: fadeEffect 2s;
+    }
+
+    @keyframes fadeEffect {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    .tabcontent img {
+        display: block;
+        max-width: 50%;
+        height: auto;
+        /* max-width: 400px; */
+    }
+
+    .tabcontent img.longImg {
+        max-width: 90% !important;
+        height: auto;
+    }
+
+    .hwbg {
+        background-image: url("img/hp-f1-hogwarts-boats-firstyear-square.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+        min-height: 800px;
+        overflow: hidden;
+    }
+
+    .hwbg p {
+        text-shadow: 2px 2px rgb(32, 32, 32);
+    }
+
+    #musicBox {
+        padding: 5px;
+        position: fixed;
+        bottom: 25px;
+        left: 5px;
+        z-index: 2;
+    }
+
+    .floatLeft {
+        float: left;
+    }
+
+    .floatRight {
+        float: right;
+    }
+
+    .centerImg {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #wrapper {
+        height: 100%;
+        width: auto;
+    }
+
+    #map-container {
+        background-color: black;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 60%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    #map { 
+        height: 100%;
+        width: 100%; 
+    }
+
+    #content-container {
+        width: 40%;
+        height: 100%;
+        margin-left: 60%;
+        /* border: 1px red solid; */
+    }
+
+    /* .hide {
+        display: none;
+    } */
